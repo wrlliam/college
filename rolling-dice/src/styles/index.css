@@ -38,11 +38,11 @@
   }
 }
 .rotating {
-  -webkit-animation: rotating 2s linear infinite;
-  -moz-animation: rotating 2s linear infinite;
-  -ms-animation: rotating 2s linear infinite;
-  -o-animation: rotating 2s linear infinite;
-  animation: rotating 2s linear infinite;
+  -webkit-animation: rotating 2s cubic-bezier(0.075, 0.82, 0.165, 1) infinite;
+  -moz-animation: rotating 2s cubic-bezier(0.075, 0.82, 0.165, 1) infinite;
+  -ms-animation: rotating 2s cubic-bezier(0.075, 0.82, 0.165, 1) infinite;
+  -o-animation: rotating 2s cubic-bezier(0.075, 0.82, 0.165, 1) infinite;
+  animation: rotating 2s cubic-bezier(0.075, 0.82, 0.165, 1) infinite;
 }
 
 @theme inline {
@@ -153,6 +153,22 @@
 }
 
 @layer base {
+  :root {
+    --chart-1: oklch(0.488 0.243 264.376);
+    --chart-2: oklch(0.696 0.17 162.48);
+    --chart-3: oklch(0.769 0.188 70.08);
+    --chart-4: oklch(0.627 0.265 303.9);
+    --chart-5: oklch(0.645 0.246 16.439);
+  }
+
+  .dark {
+    --chart-1: oklch(0.488 0.243 264.376);
+    --chart-2: oklch(0.696 0.17 162.48);
+    --chart-3: oklch(0.769 0.188 70.08);
+    --chart-4: oklch(0.627 0.265 303.9);
+    --chart-5: oklch(0.645 0.246 16.439);
+  }
+
   * {
     @apply border-border outline-ring/50;
   }

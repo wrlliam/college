@@ -1,39 +1,49 @@
 import confetti from "canvas-confetti";
 import { useState } from "react";
-
+import Histrogram from "../components/histrogram";
+import { Dice } from "../lib/dice";
 
 // Parse string to number or return a minimum if NaN
-const parseOrDefault = (parse: any, def: number) =>
+export const parseOrDefault = (parse: any, def: number) =>
   isNaN(parseInt(parse)) ? def : parseInt(parse);
 
 // Returns the sum of an array of numbers or miniumum of 1.
-const arraySum = (arr: number[]) =>
+export const arraySum = (arr: number[]) =>
   arr.length < 1 ? 0 : arr.reduce((acc, cv) => cv + acc);
-
 
 /* Dice roll logic, set a max, min, and amount of dice to return, 
 rounds the number and ensure if its smaller than min, return min.
 
-Returns as array to display each roll seperately*/
-const diceRoll = (max: number, amountOfDice: number = 1, min: number = 1) => {
-  let sum = [];
+Returns as array to display each roll seperately */
+// export const diceRoll = (
+//   max: number,
+//   amountOfDice: number = 1,
+//   min: number = 1
+// ) => {
+//   let sum = [];
 
-  for (let i = 0; i < amountOfDice; i++) {
-    const r = Math.floor(Math.random() * max);
-    sum.push(r < min ? min : r);
-  }
+//   for (let i = 0; i < amountOfDice; i++) {
+//     const r = Math.floor(Math.random() * (max - min + 1)) + min;
+//     sum.push(r);
+//   }
 
-  return sum;
-};
-
+//   return sum;
+// };
 
 // Main exported function -> the displayed page.
 export default function RootPage() {
   // Setting reactive variables so the referenced components update on change
+  // Number data types, stored as string to simplify input, parsed to int later on
   const [maxDiceSize, setMaxDiceSize] = useState("6");
   const [amountOfDice, setAmountOfDice] = useState("1");
   const [result, setResult] = useState<number[]>([]);
+  const [rollCounter, setRollCounter] = useState(0);
+
+  // Boolean
   const [loading, setLoading] = useState(false);
+
+  // String to store the name
+  const [name, setName] = useState("John Doe");
 
   // Confetti boom boom boom
   const confettiCannons = () => {
@@ -71,8 +81,20 @@ export default function RootPage() {
 
   // Main content of the page
   return (
-    <div className="flex items-center justify-center w-screen h-screen">
+    <div className="flex items-center justify-center w-screen mt-[4rem]">
       <div className="flex gap-[0.5rem] w-[500px] flex-col">
+        <div className="flex gap-2 flex-col">
+          {/* Take input for name */}
+          <h1>Your name</h1>
+          <input
+            type="text"
+            className={`border-1 rounded-sm px-4 py-2 ${
+              name.length <= 0 ? "border-red-500" : "border-green-500"
+            }`}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
         <div className="flex gap-2 flex-col">
           {/* Take input for max dice size e.g 20, ensure it is a valid number */}
           <h1>Max Dice Size</h1>
@@ -107,16 +129,19 @@ export default function RootPage() {
         <button
           onClick={(e) => {
             e.preventDefault();
-            setLoading(true);
 
+            setLoading(true);
+            const diceRollCount = parseOrDefault(amountOfDice, 1);
+            const dice = new Dice(
+              parseOrDefault(maxDiceSize, 6),
+              1,
+              diceRollCount
+            );
             setTimeout(() => {
-              setResult(
-                diceRoll(
-                  parseOrDefault(maxDiceSize, 6),
-                  parseOrDefault(amountOfDice, 1)
-                )
-              );
+              setResult(dice.roll());
+              setRollCounter(rollCounter + diceRollCount);
               setLoading(false);
+
               confettiCannons();
             }, 1500);
           }}
@@ -133,7 +158,16 @@ export default function RootPage() {
               !loading ? (
                 <span className="flex gap-3">
                   {result.map((r) => (
-                    <span>{r}</span>
+                    // Inline selection case
+                    <span
+                      className={`${
+                        r === parseOrDefault(maxDiceSize, 6)
+                          ? "font-bold text-green-600"
+                          : ""
+                      }`}
+                    >
+                      {r}
+                    </span>
                   ))}
                 </span>
               ) : (
@@ -144,6 +178,12 @@ export default function RootPage() {
             )}
           </span>
         </div>
+
+        <div className="text-sm opacity-30 italic">
+          Your ({name}) total dice rolls: {rollCounter}
+        </div>
+
+        <Histrogram />
       </div>
     </div>
   );
