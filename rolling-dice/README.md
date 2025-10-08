@@ -7,4 +7,4 @@
 - Reactive logic + loading states and animations
 
 
-![screenshot](<CleanShot 2025-10-08 at 09.57.54@2x.png>)
+![screenshot](<CleanShot 2025-10-08 at 10.03.04@2x.png>)
